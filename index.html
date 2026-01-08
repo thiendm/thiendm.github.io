@@ -26,5 +26,34 @@
 
             <input type="submit" value="Upload">
     </form>
+    <br>
+    <br>
+    <h1>Form POST - CORS Prefight</h1>
+    <form action="https://example.com/resource" method="POST">
+		<input type="hidden" name="customField" value="customValue">
+		<input type="submit" value="Submit">
+	</form>
+	<script>
+		document.addEventListener('DOMContentLoaded', function() {
+			const form = document.querySelector('form');
+			form.addEventListener('submit', function(event) {
+				event.preventDefault();
+
+				const formData = new FormData(form);
+				
+				fetch('https://example.com/resource', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+						'X-Custom-Header': 'customValue'  // Triggers preflight
+					},
+					body: JSON.stringify(Object.fromEntries(formData))
+				})
+				.then(response => response.json())
+				.then(data => console.log(data))
+				.catch(error => console.error('Error:', error));
+			});
+		});
+	</script>
 </body>
 </html>
